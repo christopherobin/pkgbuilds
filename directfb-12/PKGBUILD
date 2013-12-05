@@ -1,0 +1,35 @@
+# $Id: PKGBUILD 100148 2013-11-01 20:23:24Z spupykin $
+# Based on the original PKGBUILD for directfb by Jaroslav Lichtblau <dragonlord@aur.archlinux.org> and Eric Bélanger <eric@archlinux.org>
+# Maintainer: Christophe Robin <crobin@nekoo.com>
+
+pkgname=directfb-1.2
+pkgver=1.2.9
+pkgrel=1
+pkgdesc="A thin library that provides hardware graphics acceleration, input device handling and abstraction, integrated windowing system on top of the Linux Framebuffer Device"
+arch=('i686' 'x86_64')
+url="http://www.directfb.org"
+license=('LGPL')
+depends=('gcc-libs' 'libjpeg' 'sdl' 'libpng' 'freetype2' 'libdrm' 'libgl' 'mesa')
+source=(http://www.directfb.org/downloads/Core/DirectFB-${pkgver%.*}/DirectFB-${pkgver}.tar.gz)
+md5sums=('0ac81c7d9ea0099fc3cc066f9279410e')
+
+build() {
+  cd DirectFB-${pkgver}
+  LIBPNG_CONFIG=/usr/bin/libpng12-config ./configure --prefix=/usr --sysconfdir=/etc \
+    --enable-zlib --enable-x11 --enable-sdl --disable-vnc --disable-osx \
+    --enable-video4linux2 --enable-voodoo \
+    --enable-mesa --enable-drmkms --program-suffix=12
+  make
+} 
+
+package() {
+  cd DirectFB-${pkgver}
+  make DESTDIR="${pkgdir}" install
+  # We don't want to overwrite the main .so
+  rm "${pkgdir}/usr/lib/lib"{direct,directfb,fusion,voodoo}.so
+  # Rename include directories
+  mv "${pkgdir}/usr/include/directfb" "${pkgdir}/usr/include/directfb-1.2"
+  mv "${pkgdir}/usr/include/directfb-internal" "${pkgdir}/usr/include/directfb-internal-1.2"
+  # TODO: maybe rename stuff?
+  rm -Rf "${pkgdir}/usr/lib/pkgconfig"
+}
