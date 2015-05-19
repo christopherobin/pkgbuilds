@@ -1,0 +1,19 @@
+# Maintainer: Christophe Robin <crobin at gmail a-dot com>
+# curl -s 'http://www.manager.io/download.json' --compressed | cut -d ' ' -f 7
+
+pkgname=manager.io
+pkgver=15.1.93
+pkgrel=1
+pkgdesc="Manager is free accounting software for small business."
+arch=('i686' 'x86_64')
+url="http://www.manager.io"
+source=("manager-v${pkgver}.deb::http://cdn.manager.io/downloads/v${pkgver}/Manager.deb")
+depends=("mono" "webkit-sharp")
+
+package() {
+  msg2 "Extracting the data.tar.gz"
+  tar -xf data.tar.xz -C "${pkgdir}/"
+  ln -s /usr/bin/mono "${pkgdir}/usr/bin/cli"
+}
+
+md5sums=('2d85c8bd187c41b2470e6f24d724b925')

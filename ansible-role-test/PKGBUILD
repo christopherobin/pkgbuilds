@@ -1,0 +1,22 @@
+pkgname="ansible-role-test"
+pkgver="0.0.1"
+pkgrel=1
+pkgdesc="ansible-role-test is a tool that uses docker containers to quickly create disposable boxes that can be provisioned by a test ansible playbook via ssh."
+arch=('any')
+url=('https://github.com/AerisCloud/ansible-role-test/')
+license=('MIT')
+depends=('docker')
+makedepends=('python2' 'python2-virtualenv')
+options=('!strip')
+source=("https://github.com/AerisCloud/ansible-role-test/archive/v${pkgver}.tar.gz")
+md5sums=('393f5de7f307c220b2eda27fd452d0b1')
+
+build() {
+	cd "${srcdir}/${pkgname}-${pkgver}"
+	make dist
+}
+
+package() {
+	cd "${srcdir}/${pkgname}-${pkgver}"
+	install -Dm644 -m755 "dist/ansible-role-test-$(uname -s)-$(uname -m)" "${pkgdir}/usr/bin/ansible-role-test"
+}
